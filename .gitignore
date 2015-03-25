@@ -2,3 +2,4 @@ node_modules/
 built-app/
 .*.swp
 .DS_Store
+.sass-cache*
