@@ -44,7 +44,6 @@ gulp.task('watch', function() {
   gulp.watch(APP_COFFEE, ['js'])
   gulp.watch(APP_HTML, ['copy-html'])
   gulp.watch(APP_ASSETS, ['copy-assets'])
-  gulp.watch(APP_SERVER, ['develop'])
 })
 
 gulp.task('default', function() {
