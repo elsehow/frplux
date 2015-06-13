@@ -1,12 +1,11 @@
 Bacon = require 'baconjs'
 _ = require 'lodash'
 
-
 class MessageboardStore
 
-	# state stream is a bacon bus
+	# the STATE STREAM is a bacon bus
 	stateStream: new Bacon.Bus()
-	# for now, we'll just use a vanilla js object as a state
+	# for now, we'll just use a vanilla js object as our state
 	state: 
 		loadingMessages: false
 		messages: []
@@ -64,14 +63,13 @@ class MessageboardStore
 	action: (str) -> 
 		return (v) -> v.action is str
 
+	# hacky functions for manipulating app state
+	# ignore these 
+	updateMessage = (messages, msgID, key, value) ->
+		_.forEach messages, (msg, k) ->
+			if msg._id is msgID then msg[key] = value
+	deleteMessage = (messages, msgID) ->
+		_.reject messages, '_id', msgID 
 
-# hacky functions for manipulating the state
-# you can safely ignore these
-updateMessage = (messages, msgID, key, value) ->
-	_.forEach messages, (msg, k) ->
-		if msg._id is msgID
-			msg[key] = value
-deleteMessage = (messages, msgID) ->
-	_.reject messages, '_id', msgID 
 
 module.exports = MessageboardStore
