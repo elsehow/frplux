@@ -1,9 +1,10 @@
-example_view = require './lib/view.coffee'
+Messageboard = require './messageboard/MessageboardEntry.coffee'
 $ = require 'jquery'
+Bacon = require 'baconjs'
 
 init = ->
-	console.log 'main app launching'
-	example_view.setup()
+	dispatcher = new Bacon.Bus()
+	Messageboard.setup(dispatcher)
 	console.log 'main app done+launched'
 
 # launch the app
