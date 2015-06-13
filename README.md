@@ -18,7 +18,7 @@ and, logically enough, the Messageboard triggers actions expoed in Actions.
 
 ## principles
 
-a COMPONENT draws to the dom. it calls functions in the ACTIONS.
+![frplux architecture diagram](http://i.imgur.com/Fx2Vszo.png)
 
 ACTIONS (1) trigger AJAX events (2) push messages over the DISPATCHER stream.
 
