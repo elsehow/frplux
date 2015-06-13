@@ -12,7 +12,7 @@ this is a work in progress. issues and PRs are most welcome.
 
 ACTIONS (1) trigger AJAX events (2) push messages over the DISPATCHER stream.
 
-the STORE reacts to events in the DISPATCHER stream. the STORE (1) updates the application state and (2) pushes the (entire) application state over the STATE STREAM.
+the STORE reacts to messages in the DISPATCHER stream by (1) updating the application state and (2) pushing the *(entire)* application state over the STATE STREAM.
 
 the COMPONENT re-draws the entire DOM every time a state comes through the STATE STREAM.
 
