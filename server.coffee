@@ -40,7 +40,10 @@ read = (file) ->
 # HTTP routes
 #
 app.get '/', (req, res) -> read 'index.html' .pipe res 
-app.get '/messages', (req, res) -> res.json fakeDb
+
+app.get '/messages', (req, res) -> 
+	delay 500, () -> res.json fakeDb
+
 app.delete '/messages', (req, res) -> 
 	messageID = req.body.messageID
 	# a fake wait time
@@ -50,11 +53,6 @@ app.delete '/messages', (req, res) ->
 			res.json { messageID: messageID }
 		else
 			res.sendStatus 500
-
-app.post '/json', (req, res) ->
-	console.log 'json!!', req.body
-	res.json message : 'thanks'
-
 #
 # run server
 #

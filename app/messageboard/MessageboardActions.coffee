@@ -23,12 +23,10 @@ class MessageboardActions
 		# start AJAX request to delete
 		promise = @$deleteMessage messageID
 		promise.done () =>
-			console.log 'called, success'
 			@dispatcher.push
 				action: 'deleteSuccess'
 				messageID: messageID
 		promise.fail (err) =>
-			console.log 'called, fail'
 			@dispatcher.push
 				action: 'deleteFailure'
 				messageID: messageID

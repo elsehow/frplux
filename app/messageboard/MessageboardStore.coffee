@@ -2,21 +2,16 @@ Bacon = require 'baconjs'
 _ = require 'lodash'
 
 
-updateMessage = (messages, msgID, key, value) ->
-	_.forEach messages, (msg, k) ->
-		if msg._id is msgID
-			msg[key] = value
-
-deleteMessage = (messages, msgID) ->
-	_.reject messages, '_id', msgID 
-
 class MessageboardStore
 
+	# state stream is a bacon bus
 	stateStream: new Bacon.Bus()
+	# for now, we'll just use a vanilla js object as a state
 	state: 
 		loadingMessages: false
 		messages: []
 
+	# wire actions to dispatch events here
 	constructor: (@dispatcher) ->
 
 		# fetch messages
@@ -30,20 +25,15 @@ class MessageboardStore
 		# delete messages
 		@dispatcher
 			.filter @action 'deleteMessagePending'
-			.onValue (v) => @deleteMessagePending v.messageID
+			.onValue @deleteMessagePending
 		@dispatcher
 			.filter @action 'deleteSuccess'
-			.onValue (v) => @deleteMessage v.messageID
+			.onValue @deleteMessage
 		@dispatcher
 			.filter @action 'deleteFailure'
-			.onValue (v) => @deleteMessageFailed v.messageID
+			.onValue @deleteMessageFailed
 
-	pushState: => 
-		@stateStream.push @state
-
-	action: (str) -> 
-		(v) -> v.action is str
-
+	# methods for loading messages
 	messagesAreLoading: =>
 		@state.loadingMessages = true
 		@pushState()
@@ -53,21 +43,35 @@ class MessageboardStore
 		@state.messages = dispatch.messages 
 		@pushState()
 
-	deleteMessagePending: (messageID) =>
-		updateMessage @state.messages, messageID, 'deletePending', true 
+	# methods for deleting messages
+	deleteMessagePending: (dispatch) =>
+		updateMessage @state.messages, dispatch.messageID, 'deletePending', true 
 		@pushState()
 
-	deleteMessageFailed: (messageID) =>
-		updateMessage @state.messages, messageID, 'deletePending', false 
-		updateMessage @state.messages, messageID, 'error'
+	deleteMessageFailed: (dispatch) =>
+		updateMessage @state.messages, dispatch.messageID, 'deletePending', false 
+		updateMessage @state.messages, dispatch.messageID, 'error'
 			, 'The server encountered an error while trying to delete your message. :( Try again.'
 		@pushState()
 
-	deleteMessage: (messageID) ->
-		console.log messageID
-		@state.messages = deleteMessage @state.messages, messageID
+	deleteMessage: (dispatch) =>
+		@state.messages = deleteMessage @state.messages, dispatch.messageID
 		@pushState()
 
+	# utility methods
+	pushState: => 
+		@stateStream.push @state
+	action: (str) -> 
+		return (v) -> v.action is str
 
+
+# hacky functions for manipulating the state
+# you can safely ignore these
+updateMessage = (messages, msgID, key, value) ->
+	_.forEach messages, (msg, k) ->
+		if msg._id is msgID
+			msg[key] = value
+deleteMessage = (messages, msgID) ->
+	_.reject messages, '_id', msgID 
 
 module.exports = MessageboardStore
