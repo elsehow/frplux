@@ -8,5 +8,4 @@ init = ->
 	console.log 'main app done+launched'
 
 # launch the app
-$(document).ready(() ->
-	init() )
+$(document).ready init
