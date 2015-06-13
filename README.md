@@ -6,7 +6,7 @@ the core idea is to replace a dispatcher with a single, Bacon bus.
 
 this is a work in progress. issues and PRs are most welcome.
 
-## principles
+## overview
 
 ![frplux architecture diagram](http://i.imgur.com/Fx2Vszo.png)
 
@@ -26,7 +26,7 @@ each event in `Store.stateStream` (another Bacon.Bus()) is the application state
 
 and, logically enough, the Messageboard triggers actions expoed in Actions.
 
-
+NB, this isn't a library, there is no library offered here at all. it's just an example of a pattern, with Bacon.Bus() as the implementation.
 
 ## setup 
 
