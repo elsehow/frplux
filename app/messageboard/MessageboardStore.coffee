@@ -68,7 +68,7 @@ class MessageboardStore
 	# hacky functions for manipulating app state
 	# ignore these 
 	updateMessage = (messages, msgID, key, value) ->
-		_.forEach messages, (msg, k) ->
+		_.forEach messages, (msg, k) =>
 			if msg._id is msgID then msg[key] = value
 	deleteMessage = (messages, msgID) ->
 		_.reject messages, '_id', msgID 
