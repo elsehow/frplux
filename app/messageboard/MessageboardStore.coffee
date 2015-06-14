@@ -60,10 +60,10 @@ class MessageboardStore
 	action: (str) ->  # filters for msg.action
 		return (msg) -> msg.action is str
 	wire: (msgActionModel) => # wires functions to messages
-		_.each msgActionModel, (fn, message) ->
+		_.each msgActionModel, (fn, message) =>
 			@dispatcher
 				.filter @action message
-				.onValue fn	
+				.onValue (m) -> fn m 
 
 	# hacky functions for manipulating app state
 	# ignore these 
