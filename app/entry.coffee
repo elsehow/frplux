@@ -1,11 +1,12 @@
 _ = require 'lodash'
 $ = require 'jquery'
-Bacon = require 'baconjs'
+Kefir = require 'kefir'
+Bus = require 'kefir-bus'
 Messageboard = require './messageboard/MessageboardEntry.coffee'
 
 init = ->
 	# setup app
-	dispatcher = new Bacon.Bus()
+	dispatcher = Bus()
 	Messageboard.setup(dispatcher)
 	# all done
 	console.log 'main app done+launched'
