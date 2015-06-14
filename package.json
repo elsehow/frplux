@@ -1,19 +1,19 @@
 {
-  "name": "empty-webapp",
+  "name": "frplux-example",
   "version": "1.0.0",
-  "description": "an empty webapp",
+  "description": "an experiment in building a Flux architecture using FRP techniques",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elsehow/empty-webapp.git"
+    "url": "https://github.com/elsehow/frplux.git"
   },
   "author": "elsehow",
   "license": "Mit",
   "bugs": {
-    "url": "https://github.com/elsehow/empty-webapp/issues"
+    "url": "https://github.com/elsehow/frplux/issues"
   },
   "homepage": "https://github.com/elsehow/empty-webapp",
   "devDependencies": {

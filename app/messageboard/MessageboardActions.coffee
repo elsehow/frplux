@@ -5,16 +5,17 @@ class MessageboardActions
 	constructor: (@dispatcher) ->
 
 	fetchMessages: =>
-		# push starting fetch to dispatcher
-		@dispatcher.push
-			action: 'startingFetch'
-		# fetch messages from server
+		# tell dispatcher we're starting to fetch messages
+		@dispatcher.push action: 'startingFetch'
+		# start the ajax request 
 		promise = @$fetchMessages() 
 		promise.done (messages) =>
+			# we're done fetching now
+			@dispatcher.push action: 'doneFetching'
+			# here are our messages
 			@dispatcher.push
 				action: 'fetchSuccess'
 				messages: messages
-
 	deleteMessage: (messageID) =>
 		# push starting delete to dispatcher
 		@dispatcher.push
