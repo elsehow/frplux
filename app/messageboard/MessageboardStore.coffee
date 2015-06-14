@@ -13,25 +13,22 @@ class MessageboardStore
 	# wire actions to dispatch events here
 	constructor: (@dispatcher) ->
 
-		# fetch messages
-		@dispatcher
-			.filter @action 'startingFetch'
-			.onValue @messagesAreLoading
-		@dispatcher
-			.filter @action 'fetchSuccess'
-			.onValue @setMessages
+		# this object relates `message.action` strings to functions
+		# whenever a `message` comes in whose `message.action` matches one of these strings
+		# the related function is called on `message`
+		messageActionModel =  {
+			# fetch messages
+			'startingFetch' : @messagesAreLoading
+			'fetchSuccess' : @setMessages
+			# delete messages
+			'deleteMessagePending' : @deleteMessagePending
+			'deleteSuccess' : @deleteMessage
+			'deleteFailure' : @deleteMessageFailed
+		}
 
-		# delete messages
-		@dispatcher
-			.filter @action 'deleteMessagePending'
-			.onValue @deleteMessagePending
-		@dispatcher
-			.filter @action 'deleteSuccess'
-			.onValue @deleteMessage
-		@dispatcher
-			.filter @action 'deleteFailure'
-			.onValue @deleteMessageFailed
-
+		# check out this function for implementation details
+		@wire messageActionModel
+		
 	# methods for loading messages
 	messagesAreLoading: =>
 		@state.loadingMessages = true
@@ -58,10 +55,15 @@ class MessageboardStore
 		@pushState()
 
 	# utility methods
-	pushState: => 
+	pushState: =>  # pushes state over @stateStream
 		@stateStream.push @state
-	action: (str) -> 
-		return (v) -> v.action is str
+	action: (str) ->  # filters for msg.action
+		return (msg) -> msg.action is str
+	wire: (msgActionModel) => # wires functions to messages
+		_.each msgActionModel, (fn, message) ->
+			@dispatcher
+				.filter @action message
+				.onValue fn	
 
 	# hacky functions for manipulating app state
 	# ignore these 
