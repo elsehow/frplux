@@ -67,6 +67,7 @@ class MessageboardStore
 				.filter @action message
 				.onValue (m) -> fn m 
 
+	# hacky functions for manipulating app state
 	# ignore these 
 	updateMessage = (messages, msgID, key, value) ->
 		_.forEach messages, (msg, k) =>
