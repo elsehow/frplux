@@ -10,9 +10,9 @@ this is a work in progress. issues and PRs are most welcome.
 
 ![frplux architecture diagram](http://i.imgur.com/Fx2Vszo.png)
 
-ACTIONS (1) trigger AJAX events (2) push messages over the DISPATCHER stream.
+ACTIONS  push messages over the DISPATCHER stream.
 
-the STORE reacts to messages in the DISPATCHER stream by (1) updating the application state and (2) pushing the *(entire)* application state over the STATE STREAM.
+the STORE reacts to messages in the DISPATCHER stream by (1) updating the application state (2) talking to the outside world and (3) pushing the *(entire)* application state over the STATE STREAM whenever there's a change.
 
 the COMPONENT re-draws the entire DOM every time a state comes through the STATE STREAM.
 
