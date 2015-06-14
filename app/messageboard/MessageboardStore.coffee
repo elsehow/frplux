@@ -16,26 +16,28 @@ class MessageboardStore
 		# this object relates `message.action` strings to functions
 		# whenever a `message` comes in whose `message.action` matches one of these strings
 		# the related function is called on `message`
-		messageActionModel =  {
+		# check out wire function for implementation details
+		@wire {
 			# fetch messages
-			'startingFetch' : @messagesAreLoading
+			'startingFetch' : @messagesBeingFetched
+			'doneFetching' : @doneFetchingMessages
 			'fetchSuccess' : @setMessages
 			# delete messages
 			'deleteMessagePending' : @deleteMessagePending
 			'deleteSuccess' : @deleteMessage
 			'deleteFailure' : @deleteMessageFailed
-		}
-
-		# check out this function for implementation details
-		@wire messageActionModel
+		} 
 		
 	# methods for loading messages
-	messagesAreLoading: =>
+	messagesBeingFetched: =>
 		@state.loadingMessages = true
 		@pushState()
 
-	setMessages: (dispatch) =>
+	doneFetchingMessages: =>
 		@state.loadingMessages = false
+		@pushState()
+
+	setMessages: (dispatch) =>
 		@state.messages = dispatch.messages 
 		@pushState()
 
@@ -59,8 +61,9 @@ class MessageboardStore
 		@stateStream.push @state
 	action: (str) ->  # filters for msg.action
 		return (msg) -> msg.action is str
-	wire: (msgActionModel) => # wires functions to messages
-		_.each msgActionModel, (fn, message) =>
+	wire: (obj) => # takes an object of { 'message':fn }
+		_.each obj, (fn, message) =>
+			# sets @dispatcher to fn(message) on message.action
 			@dispatcher
 				.filter @action message
 				.onValue (m) -> fn m 
