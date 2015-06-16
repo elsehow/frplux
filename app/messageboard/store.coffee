@@ -19,8 +19,9 @@ class MessageboardStore
 		@wire
 			'fetchMessages' : @fetchMessages
 			'deleteMessage' : @deleteMessage 
+
 	#
-	# methods for loading messages
+	# exposed methods
 	#
 	fetchMessages: =>
 		# we're starting to fetch messages now
@@ -36,21 +37,6 @@ class MessageboardStore
 		promise.fail () =>
 			@doneFetchingMessages()
 
-	messagesAreBeingFetched: =>
-		@state.loadingMessages = true
-		@pushState()
-
-	doneFetchingMessages: =>
-		@state.loadingMessages = false
-		@pushState()
-
-	setMessages: (messages) =>
-		@state.messages = messages 
-		@pushState()
-
-	#
-	# methods for deleting messages
-	#
 	deleteMessage: (dispatch) =>
 		# gray out the thing we're about to delete
 		@deleteMessagePending dispatch
@@ -65,18 +51,36 @@ class MessageboardStore
 		promise.fail () =>
 			@deleteMessageFailed dispatch
 
+	#
+	# helper methods for loading messages
+	#
+	messagesAreBeingFetched: =>
+		@state.loadingMessages = true
+		@pushState()
+
+	doneFetchingMessages: =>
+		@state.loadingMessages = false
+		@pushState()
+
+	setMessages: (messages) =>
+		@state.messages = messages 
+		@pushState()
+
+	#
+	# helper methods for deleting messages
+	#
 	deleteMessagePending: (dispatch) =>
-		updateInState @state.messages, dispatch.messageID, 'deletePending', true 
+		_updateInState @state.messages, dispatch.messageID, 'deletePending', true 
 		@pushState()
 
 	deleteMessageFailed: (dispatch) =>
-		updateInState @state.messages, dispatch.messageID, 'deletePending', false 
-		updateInState @state.messages, dispatch.messageID, 'error'
+		_updateInState @state.messages, dispatch.messageID, 'deletePending', false 
+		_updateInState @state.messages, dispatch.messageID, 'error'
 			, 'The server encountered an error while trying to delete your message. :( Try again.'
 		@pushState()
 
 	removeMessageFromModel: (dispatch) =>
-		@state.messages = delFromState @state.messages, dispatch.messageID
+		@state.messages = _delFromState @state.messages, dispatch.messageID
 		@pushState()
 
 	#
@@ -95,10 +99,10 @@ class MessageboardStore
 
 	# hacky functions for manipulating app state
 	# you can ignore these 
-	updateInState = (messages, msgID, key, value) ->
+	_updateInState = (messages, msgID, key, value) ->
 		_.forEach messages, (msg, k) =>
 			if msg._id is msgID then msg[key] = value
-	delFromState = (messages, msgID) ->
+	_delFromState = (messages, msgID) ->
 		_.reject messages, '_id', msgID 
 
 
