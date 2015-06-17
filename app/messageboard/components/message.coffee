@@ -1,28 +1,30 @@
-h = require "virtual-dom/h"
+# h = require "virtual-dom/h"
+React = require 'react'
 
 deleteButton = (msg, actions) ->
-	return h "button.delete"
-		, { onclick: () -> actions.deleteMessage msg._id }
-		, "x"
+	React.createElement("button", null, "x")
 
 getError = (msg) ->
 	if msg.error 
-		return h "div.error", msg.error
+		React.createClass "div", null, msg.error
 	else 
 		return null
 
-getClass = (msg) ->
-	if msg.deletePending 
-		return '.message.deletePending' 
-	else
-		return '.message'
+# getClass = (msg) ->
+# 	if msg.deletePending 
+# 		return '.message.deletePending' 
+# 	else
+# 		return '.message'
 
-message = (msg, actions) ->
-	return h("div#{getClass msg}",
-		[
-			getError msg
-			deleteButton msg, actions
-			h "span", msg.content
-		] )
 
-module.exports = message
+Message = React.createClass
+	# 	displayName: "HelloMessage"
+	render: () ->
+		console.log '???', @props
+		return React.createElement "div", null, 
+			getError(@props.children),
+			deleteButton(@props.children),
+			React.createElement("span", null, @props.children.content)
+
+
+module.exports = Message

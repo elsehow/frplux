@@ -1,16 +1,37 @@
 _ = require 'lodash'
-h = require "virtual-dom/h"
-message = require './message.coffee'
+React = require 'react'
+Message = React.createFactory require './message.coffee'
+# inputbox = require './inputbox.coffee'
 
-messageboard = (state, actions) ->
+Messageboard = React.createClass
+	render: () ->
+		if @props.loadingMessages
+			return React.createElement("div", null, "loading......")
+		return React.createElement("div"
+			, null
+			, _.map @props.messages, (msg) -> 
+				Message(key=msg._id, message=msg))
 
-	if state.loadingMessages
-		return h("span", "loading")
+module.exports  = Messageboard
 
-	return h("div", [
-		# h("span", "sup")
-        h "div", _.map state.messages, (msg) -> 
-        	message msg, actions 
-		])
+# Timer = React.createClass(
+# 	displayName: "Timer"
+# 	getInitialState: () ->
+# 		return {secondsElapsed: 0}
 
-module.exports = messageboard
+# 	tick: () ->
+# 		this.setState({secondsElapsed: this.state.secondsElapsed + 1})
+
+# 	componentDidMount: () ->
+# 		this.interval = setInterval(this.tick, 1000)
+
+# 	componentWillUnmount: () ->
+# 		clearInterval(this.interval)
+
+# 	render: () ->
+# 		return (
+# 			React.createElement("div", null, "Seconds Elapsed: ", this.state.secondsElapsed)
+# 		)
+# )
+
+# module.exports = Timer

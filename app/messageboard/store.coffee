@@ -20,7 +20,7 @@ class MessageboardStore
 	# high-level methods
 	fetchMessages: =>
 		# we're starting to fetch messages now
-		updated = @store.get().set 'loadingMessages', true
+		@setLoadingMessages true
 		# make the AJAX request
 		promise = $.ajax
 			url: '/messages'
@@ -30,7 +30,7 @@ class MessageboardStore
 			@store.get().messages.set messages 
 		# stop loading thing regardless
 		promise.always () =>
-			@store.get().set 'loadingMessages', false
+			@setLoadingMessages false 
 
 	deleteMessage: (dispatch) =>
 		# gray out the thing we're about to delete
@@ -42,34 +42,44 @@ class MessageboardStore
 			data: JSON.stringify { messageID: dispatch.messageID }
 			contentType: 'application/json; charset=utf-8'
 		promise.done () =>
-			@removeMessageFromModel dispatch
+			@removeMessage dispatch
 		promise.fail () =>
 			@deleteMessageFailed dispatch
 
 	#
-	# helper methods for deleting messages
+	# helper methods 
 	#
+	setLoadingMessages: (value) ->
+		@store.get().set 'loadingMessages', value 
+
+	setDeletePending: (msgID, value) =>
+		@store.get().messages[msgID].set 'deletePending', value
+
+	setError: (msgID, errMsg) =>
+		@store.get().messages[msgID]. set 'error', errMsg
+
 	deleteMessagePending: (dispatch) =>
 		msgID = dispatch.messageID
-		@store.get().messages[msgID].set 'deletePending', true
+		@setDeletePending msgID, true
 
 	deleteMessageFailed: (dispatch) =>
 		msgID = dispatch.messageID
-		@store.get().messages[msgID].set 'deletePending', false
-		@store.get().messages[msgID]. set 'error'
+		@setDeletePending msgID, false 
+		@setError msgID
 			, 'The server encountered an error while trying to delete your message. :( Try again.'
 
-	removeMessageFromModel: (dispatch) =>
+	removeMessage: (dispatch) =>
 		@store.get().messages.remove dispatch.messageID
 
 	#
 	# utility methods
 	#
-	action: (str) ->  # filters for msg.action
-		return (msg) -> msg.action is str
-	wire: (obj) => # takes an object of { 'message':fn }
+	# filters for msg.action
+	action: (str) -> return (msg) -> msg.action is str
+	# takes an object of { 'message':fn }
+	# sets @dispatcher to fn(message) on message.action
+	wire: (obj) => 
 		_.each obj, (fn, message) =>
-			# sets @dispatcher to fn(message) on message.action
 			@dispatcher
 				.filter @action message
 				.onValue (m) -> fn m 

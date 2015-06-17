@@ -11,5 +11,11 @@ class MessageboardActions
 		@dispatch
 			action: 'deleteMessage'
 			messageID: messageID
+
+	postMessage: (content) =>
+		console.log 'post message', content
+		@dispatch
+			action: 'postMessage'
+			content: content
 	
 module.exports = MessageboardActions
