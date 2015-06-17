@@ -9,27 +9,28 @@ setup = (dispatcher) ->
 
 	# we can call functions in actions
 	actions = new MessageboardActions dispatcher
-	# we recieve application state from store.stateStream
-	store = new MessageboardStore dispatcher 
-	stateStream = store.stateStream
+	# we recieve application state from store.store
+	store = new MessageboardStore(dispatcher).store
 
 	# this gets called whenever a new state comes in
+	render = (store) -> Messageboard store, actions
 	# notice that we're passing in our actions !
 	# this is so we can bind actions to events e.g. clicks
-	render = (state) -> Messageboard state, actions
 
-	mloop = mainLoop { loadingMessages: true }, render, {
-	    create: require("virtual-dom/create-element"),
-	    diff: require("virtual-dom/diff"),
-	    patch: require("virtual-dom/patch") }
+	# the main loop
+	mloop = mainLoop store.get(), render, {
+	    create: require "virtual-dom/create-element"
+	    diff: require "virtual-dom/diff"
+	    patch: require "virtual-dom/patch"
+	}
 	document.body.appendChild(mloop.target)
 
-	# DEBUG - log what comes thru stateStream
-	stateStream.log 'state'
-
-	# whenever a new state comes in
-	# we update the view
-	stateStream.onValue mloop.update 
+	store.on 'update', (state) -> 
+		console.log '-->', state 
+		# DEBUG: print our new state
+		console.log 'new state!', state
+		# update the view whenever a new state comes in
+		mloop.update state
 
 	# do an initial fetch
 	actions.fetchMessages()

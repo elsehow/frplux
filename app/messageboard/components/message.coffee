@@ -1,21 +1,21 @@
 h = require "virtual-dom/h"
 
 deleteButton = (msg, actions) ->
-	h "button.delete", {
-		onclick: () -> actions.deleteMessage msg._id
-	}, "x"
+	return h "button.delete"
+		, { onclick: () -> actions.deleteMessage msg._id }
+		, "x"
 
 getError = (msg) ->
 	if msg.error 
-		h "div.error", msg.error
+		return h "div.error", msg.error
 	else 
-		null
+		return null
 
 getClass = (msg) ->
 	if msg.deletePending 
-		'.message.deletePending' 
+		return '.message.deletePending' 
 	else
-		'.message'
+		return '.message'
 
 message = (msg, actions) ->
 	return h("div#{getClass msg}",

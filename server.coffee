@@ -9,19 +9,19 @@ randomInRange = require 'random-number-in-range'
 
 delay = (t, cb) -> setTimeout cb, t
 
-fakeDb = [ 
-	{   
+fakeDb =  
+	"1":    
 		"_id": "1"
-		"content": "is this tite" }
+		"content": "is this tite" 
 
-	{ 
+	"2": 
 		"_id": "2",
-		"content": "will i ever die" }
+		"content": "will i ever die" 
 
-	{ 
+	"3": 
 		"_id": "3"
-		"content": "does she love me" } 
-	]
+		"content": "does she love me" 
+
 
 #
 # express config
