@@ -1,10 +1,17 @@
-h = require "virtual-dom/h"
+React = require 'react'
+noJsxMixin = require "react-no-jsx/mixin"
 
-inputbox = (actions) ->
+InputBox = React.createClass
+	displayName: "InputBox"
+	mixins: [noJsxMixin]
 
-	return h("div", [
-        h "input#postInput"
-        h "button#postButton", "say"
-		])
+	componentWillMount: () ->
+		console.log 'i could set up all my shit now'
 
-module.exports = inputbox
+	renderTree: () ->
+		return ["div", { className: "inputDiv" }
+	        [ "input" ],
+	        [ "button", "say" ]
+		]
+
+module.exports = InputBox

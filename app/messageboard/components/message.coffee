@@ -1,30 +1,32 @@
-# h = require "virtual-dom/h"
 React = require 'react'
+noJsxMixin = require "react-no-jsx/mixin"
 
 deleteButton = (msg, actions) ->
-	React.createElement("button", null, "x")
+	return ["button", "x"]
 
 getError = (msg) ->
 	if msg.error 
-		React.createClass "div", null, msg.error
+		return ["div",  msg.error]
 	else 
 		return null
 
-# getClass = (msg) ->
-# 	if msg.deletePending 
-# 		return '.message.deletePending' 
-# 	else
-# 		return '.message'
+getMessageContent = (msg) ->
+	return ["span", msg.content]
 
+getClassName = (msg) ->
+	if msg.deletePending 
+		return '.message.deletePending' 
+	else return '.message'
 
 Message = React.createClass
-	# 	displayName: "HelloMessage"
-	render: () ->
-		console.log '???', @props
-		return React.createElement "div", null, 
-			getError(@props.children),
-			deleteButton(@props.children),
-			React.createElement("span", null, @props.children.content)
+	mixins: [noJsxMixin]
+	displayName: "Message"
 
+	renderTree: () ->
+		return [ "div", { className: getClassName(@props.message) }
+			getError(@props.message),
+			deleteButton(@props.message),
+			getMessageContent(@props.message)
+		]
 
 module.exports = Message

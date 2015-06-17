@@ -13,14 +13,17 @@ setup = (dispatcher) ->
 	# we recieve application state from store.store
 	store = new MessageboardStore(dispatcher).store
 
-	React.render React.createElement(Messageboard, store.get()), document.body
+	render = (state) ->
+		React.render React.createElement(Messageboard, state), document.body
+
+	# render initial state
+	render store.get()
 
 	store.on 'update', (state) -> 
 		# DEBUG: print our new state
 		console.log 'new state!', state
-		React.render React.createElement(Messageboard, state), document.body
 		# update the view whenever a new state comes in
-		# mloop.update state
+		render state
 
 	# do an initial fetch
 	actions.fetchMessages()
