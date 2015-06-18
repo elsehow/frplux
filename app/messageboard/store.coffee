@@ -9,7 +9,8 @@ class MessageboardStore
 		loadingMessages: true
 		messages: {} 
 
-	# wire actions to dispatch events here
+	# TODO - this should be more like @dispatcher.register
+	# see elsehow/frplux#6
 	constructor: (@dispatcher) ->
 		# this object relates `message.action` strings to functions
 		# check out wire function for implementation details
@@ -46,9 +47,8 @@ class MessageboardStore
 		promise.fail () =>
 			@deleteMessageFailed dispatch
 
-	#
+
 	# helper methods 
-	#
 	setLoadingMessages: (value) ->
 		@store.get().set 'loadingMessages', value 
 
@@ -71,8 +71,11 @@ class MessageboardStore
 	removeMessage: (dispatch) =>
 		@store.get().messages.remove dispatch.messageID
 
-	#
+
+
 	# utility methods
+	# TODO  think about more functional ways to do this
+	#		e.g. chaining, rather than a "magic" "wire" fn
 	#
 	# filters for msg.action
 	action: (str) -> return (msg) -> msg.action is str

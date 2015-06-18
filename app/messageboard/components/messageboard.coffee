@@ -9,16 +9,19 @@ Messageboard = React.createClass
 	mixins: [noJsxMixin]
 
 	renderEachMessage: () ->
-		return _.map @props.messages, (msg) ->
-			return [Message, { key: msg._id, message: msg }]
+		return _.map @props.state.messages, (msg) =>
+			return [Message, { 
+				key: msg._id
+				message: msg
+				actions: @props.actions }]
 
 	renderMessagesArea: () ->
-		if @props.loadingMessages then return ["div", "loading......"]
-		else return ["div", @renderEachMessage()]
+		if @props.state.loadingMessages then ["div", "loading......"]
+		else ["div", @renderEachMessage()]
 
 	renderTree: () ->
 		return ["div", { className: "messageboardContainer"}
-			[InputBox]
+			[InputBox, { actions: @props.actions }]
 			@renderMessagesArea()
 		]
 		

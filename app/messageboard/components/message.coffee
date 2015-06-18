@@ -1,32 +1,29 @@
 React = require 'react'
 noJsxMixin = require "react-no-jsx/mixin"
 
-deleteButton = (msg, actions) ->
-	return ["button", "x"]
-
 getError = (msg) ->
-	if msg.error 
-		return ["div",  msg.error]
-	else 
-		return null
-
+	if msg.error then ["div", { className: 'error' },  msg.error] 
+		
 getMessageContent = (msg) ->
-	return ["span", msg.content]
+	["span", msg.content]
 
 getClassName = (msg) ->
-	if msg.deletePending 
-		return '.message.deletePending' 
-	else return '.message'
+	if msg.deletePending then 'message deletePending' 
+	else 'message'
 
 Message = React.createClass
 	mixins: [noJsxMixin]
 	displayName: "Message"
 
+	handleDelete: () ->
+		@props.actions.deleteMessage(@props.message._id)
+
 	renderTree: () ->
-		return [ "div", { className: getClassName(@props.message) }
-			getError(@props.message),
-			deleteButton(@props.message),
-			getMessageContent(@props.message)
+		return [ "div"
+			, { className: getClassName(@props.message) }
+			, getError(@props.message)
+			, ["button", { onClick: @handleDelete }, "x"]
+			, getMessageContent(@props.message)
 		]
 
 module.exports = Message
