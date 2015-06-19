@@ -2,11 +2,13 @@ Freezer = require 'freezer-js'
 $ = require 'jquery'
 _ = require 'lodash'
 
-action = (str) -> return (msg) -> msg.action is str
+actionType = (str) -> return (msg) -> msg.actionType is str
 # sets side-effects of a stream given a map { "message": fn }
 wire = (stream, fnMap) => 
 	_.each fnMap, (fn, msg) => 
-		stream.filter(action msg).onValue (m) -> fn m
+		stream
+			.filter(actionType msg)
+			.onValue (m) -> fn m
 
 class MessageboardStore
 
@@ -20,6 +22,8 @@ class MessageboardStore
 	constructor: (@dispatcher) ->
 		# this object relates `message.action` strings to functions
 		# check out wire function for implementation details
+		# NB: you can get WAY fancier than this.
+		# since @dispatcher is just a stream, you can filter, throttle, debounce, whatever!
 		wire @dispatcher,
 			'fetchMessages' : @fetchMessages
 			'deleteMessage' : @deleteMessage 
