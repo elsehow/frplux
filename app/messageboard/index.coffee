@@ -14,18 +14,18 @@ render = (state, actions) ->
 setup = (dispatcher) ->
 
 	# we can call functions in actions
-	actions = new MessageboardActions dispatcher
-	# we recieve application state from store.store
-	store = new MessageboardStore(dispatcher).store
+	actions = new MessageboardActions(dispatcher).actions()
+	# we recieve application state from our store
+	store = new MessageboardStore dispatcher 
 
 	# render initial state
 	render store.get(), actions
 
+	# update the view whenever a new state comes in
 	store.on 'update', (state) -> 
+		render state, actions
 		# DEBUG: print our new state
 		# console.log 'new state!', state
-		# update the view whenever a new state comes in
-		render state, actions
 
 	# do an initial fetch
 	actions.fetchMessages()

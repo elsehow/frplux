@@ -1,8 +1,7 @@
 React = require 'react'
 noJsxMixin = require "react-no-jsx/mixin"
 
-# just setting up someting goofy 
-# mostly for the sake of a test
+# just setting up someting goofy for the sake of a test
 $ = require 'jquery'
 Bacon = require 'baconjs'
 bjq = require 'bacon.jquery'
@@ -15,16 +14,14 @@ InputBox = React.createClass
 	mixins: [noJsxMixin]
 
 	componentDidMount: () ->
-		$sayButton = $('#sayButton')
-		sayInputValue = bjq.textFieldValue $("#sayInput")
-		# enabled / disable say button depending on the input field's value
-		sayInputValue
-			.map(nonEmpty)
-			.assign $setEnabled, $sayButton 
+		$sayButton = 		$('#sayButton')
+		sayInputValue = 	bjq.textFieldValue $("#sayInput")
+		sayButtonEnabled = 	sayInputValue.map(nonEmpty)
+		saidThings = 		sayInputValue.sampledBy $sayButton.asEventStream 'click'
+		# enable / disable say button depending on the input field's value
+		sayButtonEnabled.assign $setEnabled, $sayButton
 		# post message on say button click
-		sayInputValue
-			.sampledBy $sayButton.asEventStream 'click'
-			.onValue @props.actions.postMessage
+		saidThings.onValue @props.actions.postMessage
 
 	renderTree: () ->
 		return ["div", 

@@ -2,6 +2,12 @@ Freezer = require 'freezer-js'
 $ = require 'jquery'
 _ = require 'lodash'
 
+action = (str) -> return (msg) -> msg.action is str
+# sets side-effects of a stream given a map { "message": fn }
+wire = (stream, fnMap) => 
+	_.each fnMap, (fn, msg) => 
+		stream.filter(action msg).onValue (m) -> fn m
+
 class MessageboardStore
 
 	# an immutable datastore
@@ -9,14 +15,38 @@ class MessageboardStore
 		loadingMessages: true
 		messages: {} 
 
-	# TODO - this should be more like @dispatcher.register
-	# see elsehow/frplux#6
+	# think of this like @dispatcher.register
+	# see https://github.com/elsehow/frplux/issues/3
 	constructor: (@dispatcher) ->
 		# this object relates `message.action` strings to functions
 		# check out wire function for implementation details
-		@wire
+		wire @dispatcher,
 			'fetchMessages' : @fetchMessages
 			'deleteMessage' : @deleteMessage 
+		# index subscribes to changes in this store
+		return @store
+
+	setLoadingMessages: (value) ->
+		@store.get().set 'loadingMessages', value
+
+	setDeletePending: (msgID, value) =>
+		@store.get().messages[msgID].set 'deletePending', value
+
+	setError: (msgID, errMsg) =>
+		@store.get().messages[msgID]. set 'error', errMsg
+
+	deleteMessagePending: (dispatch) =>
+		msgID = dispatch.messageID
+		@setDeletePending msgID, true
+
+	deleteMessageFailed: (dispatch) =>
+		msgID = dispatch.messageID
+		@setDeletePending msgID, false 
+		@setError msgID
+			, 'The server encountered an error while trying to delete your message. :( Try again.'
+
+	removeMessage: (dispatch) =>
+		@store.get().messages.remove dispatch.messageID
 
 	# high-level methods
 	fetchMessages: =>
@@ -46,45 +76,5 @@ class MessageboardStore
 			@removeMessage dispatch
 		promise.fail () =>
 			@deleteMessageFailed dispatch
-
-
-	# helper methods 
-	setLoadingMessages: (value) ->
-		@store.get().set 'loadingMessages', value 
-
-	setDeletePending: (msgID, value) =>
-		@store.get().messages[msgID].set 'deletePending', value
-
-	setError: (msgID, errMsg) =>
-		@store.get().messages[msgID]. set 'error', errMsg
-
-	deleteMessagePending: (dispatch) =>
-		msgID = dispatch.messageID
-		@setDeletePending msgID, true
-
-	deleteMessageFailed: (dispatch) =>
-		msgID = dispatch.messageID
-		@setDeletePending msgID, false 
-		@setError msgID
-			, 'The server encountered an error while trying to delete your message. :( Try again.'
-
-	removeMessage: (dispatch) =>
-		@store.get().messages.remove dispatch.messageID
-
-
-
-	# utility methods
-	# TODO  think about more functional ways to do this
-	#		e.g. chaining, rather than a "magic" "wire" fn
-	#
-	# filters for msg.action
-	action: (str) -> return (msg) -> msg.action is str
-	# takes an object of { 'message':fn }
-	# sets @dispatcher to fn(message) on message.action
-	wire: (obj) => 
-		_.each obj, (fn, message) =>
-			@dispatcher
-				.filter @action message
-				.onValue (m) -> fn m 
 
 module.exports = MessageboardStore
