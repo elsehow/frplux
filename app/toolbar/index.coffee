@@ -1,24 +1,22 @@
-MessageboardActions = require './actions.coffee'
-MessageboardStore = require './store.coffee'
-Messageboard = require './components/messageboard.coffee'
+ToolbarActions = require './actions.coffee'
+ToolbarStore = require './store.coffee'
+Toolbar = require './components/toolbar.coffee'
 
 React = require 'react'
 
 render = (state, actions, element) ->
 	React.render(
-		React.createElement(Messageboard, { state: state, actions: actions })
+		React.createElement(Toolbar, { state: state, actions: actions })
 		, element)
 
 # this gets called from app/entry.coffee
 # we pass in an application-wide dispatcher 
-setup = (dispatcher, id, element) ->
-
-	console.log 'this is msgboard', id
+setup = (dispatcher, element) ->
 
 	# we can call functions in actions
-	actions = new MessageboardActions(dispatcher).actions()
+	actions = new ToolbarActions(dispatcher).actions()
 	# we recieve application state from our store
-	store = new MessageboardStore(dispatcher).store
+	store = new ToolbarStore dispatcher 
 
 	# render initial state
 	initialState = store.get()
@@ -28,10 +26,10 @@ setup = (dispatcher, id, element) ->
 	store.on 'update', (state) -> 
 		render state, actions, element
 		# DEBUG: print our new state
-		# console.log 'new state!', state
+		console.log 'new toolbar state!', state
 
 	# do an initial fetch
-	actions.fetchMessages()
+	actions.fetchNotifications()
 
 
 exports.setup = setup

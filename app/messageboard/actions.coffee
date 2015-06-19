@@ -11,18 +11,18 @@ class MessageboardActions
 
 		fetchMessages: =>
 			@dispatch
-				action: 'fetchMessages'
+				actionType: 'fetchMessages'
 			
 		deleteMessage: (messageid) =>
 			@dispatch
-				action: 'deleteMessage'
+				actionType: 'deleteMessage'
 				messageid: messageid
 
 		postMessage: (content) =>
 			# debug
 			console.log 'posting', content
 			@dispatch
-				action: 'postMessage'
+				actionType: 'postMessage'
 				content: content
 	
 module.exports = MessageboardActions

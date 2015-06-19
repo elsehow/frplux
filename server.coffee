@@ -14,6 +14,12 @@ fakeNotifications =
 	"1": 
 		"_id": "1"
 		"content": "nice pic"
+	"2": 
+		"_id": "2"
+		"content": "sweet pic"
+	"3": 
+		"_id": "3"
+		"content": "really nice pic"
 
 fakeMessageboard =  
 	"1":    
@@ -45,7 +51,10 @@ read = (file) ->
 #
 # HTTP routes
 #
-app.get '/', (req, res) -> read 'index.html' .pipe res 
+app.get '/', (req, res) -> 
+	read('index.html').pipe res 
+app.get '/messageboard/:id', (req, res) -> 
+	read('index.html').pipe res 
 
 app.get '/messages', (req, res) -> 
 	delay 600, () -> res.json fakeMessageboard
