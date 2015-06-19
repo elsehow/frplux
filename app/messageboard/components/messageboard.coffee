@@ -9,8 +9,6 @@ Messageboard = React.createClass
 	mixins: [noJsxMixin]
 
 	messages: () ->
-		
-	messages: () ->
 		if @props.state.loadingMessages
 			"loading......"
 		else 

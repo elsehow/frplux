@@ -23,10 +23,8 @@ class MessageboardStore
 		wire @dispatcher,
 			'fetchMessages' : @fetchMessages
 			'deleteMessage' : @deleteMessage 
-		# index subscribes to changes in this store
-		return @store
 
-	setLoadingMessages: (value) ->
+	setLoadingMessages: (value) =>
 		@store.get().set 'loadingMessages', value
 
 	setDeletePending: (msgID, value) =>
@@ -35,18 +33,16 @@ class MessageboardStore
 	setError: (msgID, errMsg) =>
 		@store.get().messages[msgID]. set 'error', errMsg
 
-	deleteMessagePending: (dispatch) =>
-		msgID = dispatch.messageID
-		@setDeletePending msgID, true
+	deleteMessagePending: (messageID) =>
+		@setDeletePending messageID, true
 
-	deleteMessageFailed: (dispatch) =>
-		msgID = dispatch.messageID
-		@setDeletePending msgID, false 
-		@setError msgID
+	deleteMessageFailed: (messageID) =>
+		@setDeletePending messageID, false 
+		@setError messageID
 			, 'The server encountered an error while trying to delete your message. :( Try again.'
 
-	removeMessage: (dispatch) =>
-		@store.get().messages.remove dispatch.messageID
+	removeMessage: (messageID) =>
+		@store.get().messages.remove messageID
 
 	# high-level methods
 	fetchMessages: =>
@@ -65,16 +61,16 @@ class MessageboardStore
 
 	deleteMessage: (dispatch) =>
 		# gray out the thing we're about to delete
-		@deleteMessagePending dispatch
+		@deleteMessagePending dispatch.messageid
 		# start AJAX req to delete message
 		promise = $.ajax 
 			url: '/messages'
 			method: 'DELETE'
-			data: JSON.stringify { messageID: dispatch.messageID }
+			data: JSON.stringify { messageid: dispatch.messageid }
 			contentType: 'application/json; charset=utf-8'
 		promise.done () =>
-			@removeMessage dispatch
+			@removeMessage dispatch.messageid
 		promise.fail () =>
-			@deleteMessageFailed dispatch
+			@deleteMessageFailed dispatch.messageid
 
 module.exports = MessageboardStore

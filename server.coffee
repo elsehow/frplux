@@ -9,7 +9,13 @@ randomInRange = require 'random-number-in-range'
 
 delay = (t, cb) -> setTimeout cb, t
 
-fakeDb =  
+
+fakeNotifications = 
+	"1": 
+		"_id": "1"
+		"content": "nice pic"
+
+fakeMessageboard =  
 	"1":    
 		"_id": "1"
 		"content": "is this tite" 
@@ -42,7 +48,7 @@ read = (file) ->
 app.get '/', (req, res) -> read 'index.html' .pipe res 
 
 app.get '/messages', (req, res) -> 
-	delay 500, () -> res.json fakeDb
+	delay 600, () -> res.json fakeMessageboard
 
 app.delete '/messages', (req, res) -> 
 	messageID = req.body.messageID
@@ -53,6 +59,9 @@ app.delete '/messages', (req, res) ->
 			res.json { messageID: messageID }
 		else
 			res.sendStatus 500
+
+app.get '/notifications', (req, res) -> 
+	delay 100, () -> res.json fakeNotifications
 #
 # run server
 #
